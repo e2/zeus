@@ -2,10 +2,15 @@
 
 # This preamble is basically used to deal with bundler/gem_tasks, which loads the gemspec
 # on rake init, even though some prerequisites are not generated until `rake build` is invoked.
+can_retry = true
 version = begin
             require File.expand_path('../lib/zeus/version', __FILE__)
             Zeus::VERSION
           rescue LoadError
+            if /linux/ =~ RUBY_PLATFORM && can_retry && system("make -C .. rubygem/lib/zeus/version.rb")
+              can_retry = false
+              retry
+            end
             "0.0.0"
           end
 
