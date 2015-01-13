@@ -10,8 +10,15 @@ inotify-wrapper: inotify-wrapper.o
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-install:
-	# do nothing
+BUILD_DIR=../../build
+BINS=zeus-darwin-amd64 zeus-linux-386 zeus-linux-amd64
+
+$(BINS:%=$(BUILD_DIR)/%) :
+	@go version || { echo "You need Golang installed to build zeus from source"; exit 1; }
+	@echo $@
+	make -C ../../.. linux
+
+install: $(BINS:%=$(BUILD_DIR)/%)
     EOF
   end
 else
